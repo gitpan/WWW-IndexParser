@@ -1,13 +1,13 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         WWW-IndexParser
-version:      0.1
+version:      0.2
 version_from: lib/WWW/IndexParser.pm
 installdirs:  site
 requires:
-    HTML::Parser:                  3.4
-    LWP:                           5.8
-    Time::Local:                   1.1
+    HTML::Parser:                  3
+    LWP:                           5.6
+    Time::Local:                   1
 
 distribution_type: module
 generated_by: ExtUtils::MakeMaker version 6.17

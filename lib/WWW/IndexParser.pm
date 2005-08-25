@@ -7,7 +7,7 @@ use Time::Local;
 use WWW::IndexParser::Entry;
 
 BEGIN {
-  our $VERSION = 0.1;
+  our $VERSION = 0.2;
 }
 
 our $months = {
@@ -335,7 +335,7 @@ any
 
 =head1 BUGS
 
-Currently only supports Apache auto index.
+Currently only supports Apache, IIS and Tomcat style auto indexes.
 
 =head1 AUTHOR
 
