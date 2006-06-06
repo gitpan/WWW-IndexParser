@@ -7,7 +7,7 @@ use Time::Local;
 use WWW::IndexParser::Entry;
 
 BEGIN {
-  our $VERSION = 0.2;
+  our $VERSION = 0.4;
 }
 
 our $months = {
@@ -82,10 +82,19 @@ sub _url {
       return;
     }
 
-    if ($self->{res}->headers->{'content-type'} !~ /^text\/html/) {
-      warn "Not an HTML page " . $self->{res}->headers->{'content-type'};
-      return;
-    }
+    if (ref($self->{res}->headers->{'content-type'}) eq "ARRAY") {
+      my $found_html = 0;
+      foreach (@{$self->{res}->headers->{'content-type'}}) {
+        $found_html = 1 if /^text\/html/;
+      }
+      if (not $found_html) {
+        warn "Not an HTML page " . $self->{res}->headers->{'content-type'};
+        return;
+      }
+    } elsif ($self->{res}->headers->{'content-type'} !~ /^text\/html/) {
+     warn "Not an HTML page " . $self->{res}->headers->{'content-type'};
+     return;
+   }
 
     if ($self->{res}->headers->{server} =~ /^Apache-Coyote/) {
       warn "Server is Tomcat Coyote" if defined $self->{debug};
@@ -238,7 +247,10 @@ sub _parse_html_iis {
       return;
     }
     if ($origtext =~ /\s*(\w+),\s+(\w+)\s+(\d+),\s+(\d{4})\s+(\d{1,2}):(\d\d) (AM|PM)\s+([\d\.]+)/) {
-      my $time = timelocal(0, $6, $7eq'PM'?12+$5:$5, $3, $months->{$2}, $4-1900);
+      my $hour_of_day = $5;
+      $hour_of_day = 0 if ($7 eq 'AM' && $hour_of_day eq 12);
+      $hour_of_day += 12 if ($7 eq 'PM' && $hour_of_day ne 12);
+      my $time = timelocal(0, $6, $hour_of_day, $3, $months->{$2}, $4-1900);
       $self->{current_file}->{time} = $time;
       $self->{current_file}->{size} = $8;
     }
@@ -343,7 +355,7 @@ James Bromberger E<lt>james@rcpt.toE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005 James Bromberger. All rights reserved. All rights 
+Copyright (c) 2006 James Bromberger. All rights reserved. All rights 
 reserved. This program is free software; you can redistribute it and/or 
 modify it under the same terms as Perl itself.
 

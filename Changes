@@ -1,5 +1,17 @@
 Revision history for Perl extension WWW::IndexParser.
 
+0.04  Tue Jun 06 21:21:00 2006
+	- Correct time handling for 12 hour formats converting to ctime
+	- Correct handling of Content-Type being returned as an array
+
+0.03  Tue, Aug 30 12:19:40 2005
+	- Correct URL parsing in WWW::IndexParser::Entry: url() method was 
+	  rejecting some valid URLs.
+
+0.02  Thu, Aug 25 19:42:20 2005
+	- Support IIS and Tomcat style auto indexes.
+	- Correct Dependencies
+
 0.01  Tue Jul 19 00:27:35 2005
 	- original version; created by h2xs 1.23 with options
 		-AX WWW::IndexParser

@@ -3,6 +3,11 @@ use strict;
 use warnings;
 use overload '""' => \&_as_string;
 
+BEGIN {
+  our $VERSION = 0.3;
+}
+
+
 sub new {
   my $proto = shift;
   my $class = ref($proto) || $proto;
@@ -23,7 +28,7 @@ sub url {
   my $self = shift;
   if (@_) {
     my $new_url = shift;
-    return unless $new_url =~ m!^\w+://[\w\d\.]+(:\d+)?/!;
+    return unless $new_url =~ m!^\w+://[^:\s/]+(:\d+)?/!;
     $self->{url} = $new_url;
   }
   return $self->{url};
