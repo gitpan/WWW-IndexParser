@@ -4,7 +4,7 @@ use warnings;
 use overload '""' => \&_as_string;
 
 BEGIN {
-  our $VERSION = 0.3;
+  our $VERSION = 0.5;
 }
 
 
@@ -79,6 +79,7 @@ sub _as_string {
   $string.= sprintf "Size Units: %s\n", $self->size_units if defined $self->size_units;
   $string.= sprintf "Type      : %s\n", $self->type if defined $self->type;
   $string.= sprintf "URL       : %s\n", $self->url if defined $self->url;
+  $string.= sprintf "Time      : %s\n", scalar localtime($self->time);
   return $string;
 }
 

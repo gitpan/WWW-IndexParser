@@ -1,5 +1,16 @@
 Revision history for Perl extension WWW::IndexParser.
 
+0.5   Sat Sep 23 23:10:00 2006
+	- Correct parsing of Apache autoindex to not miss the final 
+	  entry in the list!
+	- Add support for passing 'debug => 1' in the contstructor method 
+	  (new()) so we can get debug output from the module
+	- Get WWW::IndexParser::Entry to print the file's time when 
+	  being coerced to a string using print().
+	- Realise the Version number in the Changes file is not the 
+	  Version number in the module (off by a factor of 10).
+	- This release is dedicated to Peter Trevor Holland, RIP.
+
 0.04  Tue Jun 06 21:21:00 2006
 	- Correct time handling for 12 hour formats converting to ctime
 	- Correct handling of Content-Type being returned as an array

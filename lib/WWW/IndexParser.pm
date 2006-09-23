@@ -7,7 +7,7 @@ use Time::Local;
 use WWW::IndexParser::Entry;
 
 BEGIN {
-  our $VERSION = 0.4;
+  our $VERSION = 0.5;
 }
 
 our $months = {
@@ -48,8 +48,12 @@ sub new {
  if (defined $args{proxy}) {
    $self->{ua}->proxy('http', $args{proxy});
  }
+ if (defined $args{debug}) {
+   $self->{debug} = $args{debug};
+ } else {
+   $self->{debug} = 0;
+ }
  $self->{parser} = HTML::Parser->new( api_version => 3);
- #$self->{debug} = 1;
  if (defined $args{url}) {
    $self->_url($args{url});
    return @{$self->{files}} if defined $self->{files};
@@ -64,7 +68,7 @@ sub _url {
   my $self = shift;
   if (@_) {
     my $new_url = shift;
-    #warn "The URL was $new_url" if defined $self->{debug};
+    warn "The URL was $new_url" if $self->{debug};
 
     $self->{url} = $new_url;
     if ($new_url =~ /^([^:]+):\/\/([^:\/]+)(:(\d+))?/) {
@@ -97,19 +101,19 @@ sub _url {
    }
 
     if ($self->{res}->headers->{server} =~ /^Apache-Coyote/) {
-      warn "Server is Tomcat Coyote" if defined $self->{debug};
+      warn "Server is Tomcat Coyote" if $self->{debug};
       $self->{parser}->handler( start => \&_parse_html_tomcat, "self, tagname, attr, attrseq, text");
       $self->{parser}->handler( text => \&_parse_html_tomcat, "self, tagname, attr, attrseq, text");
     } elsif ($self->{res}->headers->{server} =~ /^Apache/) {
-      warn "Server is Apache" if defined $self->{debug};
+      warn "Server is Apache" if $self->{debug};
       $self->{parser}->handler( start => \&_parse_html_apache, "self, tagname, attr, attrseq, text");
       $self->{parser}->handler( text => \&_parse_html_apache, "self, tagname, attr, attrseq, text");
     } elsif ($self->{res}->headers->{server} =~ /^Microsoft-IIS/) {
-      warn "Server is IIS" if defined $self->{debug};
+      warn "Server is IIS" if $self->{debug};
       $self->{parser}->handler( start => \&_parse_html_iis, "self, tagname, attr, attrseq, text");
       $self->{parser}->handler( text => \&_parse_html_iis, "self, tagname, attr, attrseq, text");
     } else {
-      warn "Unknown web server" if defined $self->{debug};
+      warn "Unknown web server" if $self->{debug};
       return;
     }
 
@@ -139,7 +143,7 @@ sub _parse_html_tomcat {
     return unless $self->{parser_state};
 
     if ($self->{parser_state} == 2) {
-      warn "The title is: $origtext" if defined $self->{debug};
+      warn "The title is: $origtext" if $self->{debug};
       if ($origtext =~ /^Directory Listing For (.+)$/) {
         $self->{directory} = $1;
       }
@@ -178,8 +182,8 @@ sub _parse_html_tomcat {
     }
     $self->{parser_state} = 1;
   } elsif ($tagname eq "a" && defined $self->{parser_state}) {
-    warn "  file name = " .  $attr->{href} if defined $self->{debug};
-    $self->{current_file}->{filename} = $attr->{href} if defined $attr->{href};
+    warn "  file name = " .  $attr->{href} if $self->{debug};
+    $self->{current_file}->{filename} = $attr->{href} if $attr->{href};
     $self->{parser_state} = 1;
   }
 }
@@ -192,7 +196,7 @@ sub _parse_html_apache {
     return unless $self->{parser_state};
 
     if ($self->{parser_state} == 2) {
-      #warn "The title is: $origtext";
+      warn "The title is: $origtext" if $self->{debug};
       if ($origtext =~ /^Index of (.+)$/) {
         $self->{directory} = $1;
       }
@@ -209,7 +213,7 @@ sub _parse_html_apache {
     $self->{parser_state} = 2;
   } elsif ($tagname eq "pre") {
     $self->{parser_state} = 1;
-  } elsif ($tagname eq "img" && defined $self->{parser_state}) {
+  } elsif (($tagname eq "img" || $tagname eq "hr") && defined $self->{parser_state}) {
     if (defined $self->{current_file} && $self->{current_file}->{filename} !~ /^\?/ && $self->{current_file}->{type} !~ /Icon/) {
       my $entry = WWW::IndexParser::Entry->new;
       $entry->filename($self->{current_file}->{filename}) if defined $self->{current_file}->{filename};
@@ -218,13 +222,16 @@ sub _parse_html_apache {
       $entry->size($self->{current_file}->{size}) if defined $self->{current_file}->{size};
       $entry->size_units($self->{current_file}->{size_units}) if defined $self->{current_file}->{size_units};
       push @{$self->{files}}, $entry;
+      warn "Added " . $self->{current_file}->{filename} if $self->{debug};
       delete $self->{current_file};
     }
-    #warn "Possible new file:" . $attr->{alt} if defined $self->{debug};
+    warn "Possible new file:" . $attr->{alt} if $self->{debug};
     $self->{current_file}->{type} = $attr->{alt} if defined $attr->{alt};
   } elsif ($tagname eq "a" && defined $self->{parser_state}) {
-    #warn "  file name = " .  $attr->{href} if defined $self->{debug};
+    warn "  file name = " .  $attr->{href} if $self->{debug};
     $self->{current_file}->{filename} = $attr->{href} if defined $attr->{href};
+  } else {
+    warn $tagname if $self->{debug};
   }
 }
 
@@ -269,7 +276,7 @@ sub _parse_html_iis {
       delete $self->{current_file};
     }
   } elsif ($tagname eq "a" && defined $self->{parser_state}) {
-    warn "  file name = " .  $attr->{href} if defined $self->{debug};
+    warn "  file name = " .  $attr->{href} if $self->{debug};
     $self->{current_file}->{filename} = $attr->{href} if defined $attr->{href};
   }
 }
@@ -303,7 +310,7 @@ by the autoindex generated: type() and size_units().
 
 =over 4
 
-=item new ( url => $url, timeout => $seconds, proxy => $proxy_url  )
+=item new ( url => $url, timeout => $seconds, proxy => $proxy_url, debug => 1  )
 
 When called with a URL to examine, this method does not return an object, 
 but an array of WWW::IndexParser::Entry obects, one per entry in the 
@@ -324,6 +331,12 @@ The timeout for the request to fetch data, default 10 seconds.
 =item proxy
 
 A proxy server URL, eg, 'http://proxy:3128/'.
+
+=item debug
+
+Decide if to print parsing debug information. Set to 0 (the default) to 
+disable, or anything non-false to print. Recommened you use a digit (ie, 1) 
+as this may become a numeric 'level' of debug in the future.
 
 =back
 
@@ -347,7 +360,7 @@ any
 
 =head1 BUGS
 
-Currently only supports Apache, IIS and Tomcat style auto indexes.
+Currently only supports Apache, IIS and Tomcat style auto indexes. Send suggestions for new Auto-Indexes to support to the author (along with sample HTML)!
 
 =head1 AUTHOR
 
