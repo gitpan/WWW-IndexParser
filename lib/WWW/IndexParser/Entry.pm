@@ -4,7 +4,7 @@ use warnings;
 use overload '""' => \&_as_string;
 
 BEGIN {
-  our $VERSION = '0.5.1';
+  our $VERSION = "0.6";
 }
 
 

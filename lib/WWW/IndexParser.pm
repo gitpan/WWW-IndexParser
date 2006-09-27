@@ -7,7 +7,7 @@ use Time::Local;
 use WWW::IndexParser::Entry;
 
 BEGIN {
-  our $VERSION = '0.5.1';
+  our $VERSION = "0.6";
 }
 
 our $months = {
