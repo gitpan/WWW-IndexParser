@@ -14,7 +14,23 @@ BEGIN { use_ok('WWW::IndexParser') };
 # Insert your test code below, the Test::More module is use()ed here so read
 # its man page ( perldoc Test::More ) for help writing this test script.
 
-my $url = "http://www.james.rcpt.to/misc/";
-my @files = WWW::IndexParser->new(url => $url);
-ok( @files,                           "fetched index from $url");
-ok( $files[0]->filename eq '/',     "first entry from $url is parent directory /");
+my $ref = WWW::IndexParser->new();
+ok( defined $ref,                    'new() returned' );
+ok( ref($ref) eq "WWW::IndexParser", 'new() returned a WWW::IndexParser');
+
+
+#my $url = "http://www.james.rcpt.to/misc/";
+#my @files = WWW::IndexParser->new(url => $url);
+#ok( @files,                           "fetched index from $url");
+#ok( $files[0]->filename eq '/',     "first entry from $url is parent directory /");
+
+# test lighttpd
+#{
+#    my $url = "http://mirrors.cat.pdx.edu/lighttpd/";
+#    my @files = WWW::IndexParser->new(url => $url);
+#    ok( @files,                           "fetched index from $url");
+#    is( $files[0]->filename, '../',          "first entry from $url is parent directory /");
+#    warn $files[0]->url;
+#    like( $files[1]->filename, qr/lighttpd/,     "second entry from $url looks like lighttpd tarball");
+#    like( $files[1]->type, qr/rpm/, $files[1]->type );
+#}

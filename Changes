@@ -1,5 +1,17 @@
 Revision history for Perl extension WWW::IndexParser.
 
+0.7   Mon Nov 13 00:14:00 2006
+	- Add support for lighttpd (www.lighttpd.net) thanks to the patch at:
+	  http://bulknews.net/lib/archives/patches/
+	  with thanks to Tatsuhiko Miyagawa
+	- Removed the tests that request content from remote servers to 
+	  limit information disclosure (damned if you do, damned if you don't)
+	- Acnowledge contribution from 'srezic' on AnnoCPAN:
+	  http://annocpan.org/~JEB/WWW-IndexParser-0.6/lib/WWW/IndexParser/Entry.pm#note_1161 
+	  "Note that it is also possible to read standard Apache indexes 
+	   with the File::Listing module, which is bundled in libwww, 
+	   though it is not documented at all"
+
 0.5.1 Sun Sep 24 18:55:00 2006
 	- Correct a missing 'if defined $self->time' in WWW::IndexParser::Entry
 
