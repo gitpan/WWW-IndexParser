@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::IndexParser.
 
+0.8   Sun Nov 19 12:15:00 2006
+	- Correct bug with status_line() in IndexParser.pm
+
 0.7   Mon Nov 13 00:14:00 2006
 	- Add support for lighttpd (www.lighttpd.net) thanks to the patch at:
 	  http://bulknews.net/lib/archives/patches/

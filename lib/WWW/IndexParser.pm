@@ -8,7 +8,7 @@ use WWW::IndexParser::Entry;
 use URI;
 
 BEGIN {
-  our $VERSION = "0.7";
+  our $VERSION = "0.8";
 }
 
 our $months = {
@@ -80,7 +80,7 @@ sub _url {
       $self->{req} = HTTP::Request->new(GET => $new_url);
       $self->{res} = $self->{ua}->request($self->{req});
       if (not $self->{res}->is_success) {
-        warn "Cannot fetch for $new_url: " . $self->{req}->status_line;
+        warn "Cannot fetch for $new_url: " . $self->{res}->status_line;
         return;
       }
     } else {
