@@ -8,7 +8,7 @@ use WWW::IndexParser::Entry;
 use URI;
 
 BEGIN {
-  our $VERSION = "0.8";
+  our $VERSION = "0.9";
 }
 
 our $months = {
@@ -214,6 +214,14 @@ sub _parse_html_apache {
       $self->{current_file}->{time} = $time;
       $self->{current_file}->{size} = $6;
       $self->{current_file}->{size_units} = $7 if defined $7;
+    } elsif ($origtext =~ /(\d\d)-(\w\w\w)-(\d{4}) (\d\d):(\d\d)/) {
+      my $time = timelocal(0, $5, $4, $1, $months->{$2}, $3-1900);
+      $self->{current_file}->{time} = $time;
+      warn " Found time (using Apache 2.2+ check)" if $self->{debug};
+    } elsif ($origtext =~ /^(\d[\d\.]+)(\w)?/) {
+      warn " Found size (using Apache 2.2+ check)" if $self->{debug};
+      $self->{current_file}->{size} = $1;
+      $self->{current_file}->{size_units} = $2 if defined $2;
     }
   } elsif ($tagname eq 'title') {
     $self->{parser_state} = 2;
@@ -231,8 +239,10 @@ sub _parse_html_apache {
       warn "Added " . $self->{current_file}->{filename} if $self->{debug};
       delete $self->{current_file};
     }
-    warn "Possible new file:" . $attr->{alt} if $self->{debug};
-    $self->{current_file}->{type} = $attr->{alt} if defined $attr->{alt};
+    if (defined $attr->{alt}) {
+      warn "Possible new file:" . $attr->{alt} if $self->{debug};
+      $self->{current_file}->{type} = $attr->{alt};
+    }
   } elsif ($tagname eq "a" && defined $self->{parser_state}) {
     warn "  file name = " .  $attr->{href} if $self->{debug};
     $self->{current_file}->{filename} = $attr->{href} if defined $attr->{href};
