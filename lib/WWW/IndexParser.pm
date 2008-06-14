@@ -6,9 +6,10 @@ use HTML::Parser;
 use Time::Local;
 use WWW::IndexParser::Entry;
 use URI;
+use Carp;
 
 BEGIN {
-  our $VERSION = "0.9";
+  our $VERSION = "0.10";
 }
 
 our $months = {
@@ -40,7 +41,7 @@ sub new {
    if ($args{timeout} =~ /^\d+/) {
      $self->{ua}->timeout($args{timeout});
    } else {
-     warn "Invalid timeout: " . $args{timeout};
+     carp "Invalid timeout: " . $args{timeout};
      return;
    }
  } else {
@@ -80,11 +81,11 @@ sub _url {
       $self->{req} = HTTP::Request->new(GET => $new_url);
       $self->{res} = $self->{ua}->request($self->{req});
       if (not $self->{res}->is_success) {
-        warn "Cannot fetch for $new_url: " . $self->{res}->status_line;
+        carp "Cannot fetch for $new_url: " . $self->{res}->status_line if $self->{debug};
         return;
       }
     } else {
-      warn "Invalid URL";
+      warn "Invalid URL " . $new_url;
       return;
     }
 
