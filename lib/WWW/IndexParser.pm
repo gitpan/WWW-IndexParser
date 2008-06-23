@@ -9,7 +9,7 @@ use URI;
 use Carp;
 
 BEGIN {
-  our $VERSION = "0.10";
+  our $VERSION = "0.91";
 }
 
 our $months = {

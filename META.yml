@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                WWW-IndexParser
-version:             0.10
+version:             0.91
 abstract:            Fetch and parse the directory index from a web server
 license:             ~
 author:              

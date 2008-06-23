@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::IndexParser.
 
+0.91  Mon Jun 23 11:51:00 2008
+	- Dont carp/warn on failure yo et index unless debug is turned on.
+
 0.8   Sun Nov 19 12:15:00 2006
 	- Correct bug with status_line() in IndexParser.pm
 
